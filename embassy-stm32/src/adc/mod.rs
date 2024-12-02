@@ -5,6 +5,7 @@
 #![cfg_attr(adc_f3_v2, allow(unused))]
 
 #[cfg(not(any(adc_f3_v2, adc_u5)))]
+#[cfg_attr(adc_c0, path = "c0.rs")]
 #[cfg_attr(adc_f1, path = "f1.rs")]
 #[cfg_attr(adc_f3, path = "f3.rs")]
 #[cfg_attr(adc_f3_v1_1, path = "f3_v1_1.rs")]
@@ -59,7 +60,7 @@ impl State {
 trait SealedInstance {
     #[allow(unused)]
     fn regs() -> crate::pac::adc::Adc;
-    #[cfg(not(any(adc_f1, adc_v1, adc_l0, adc_f3_v2, adc_f3_v1_1, adc_g0, adc_u5)))]
+    #[cfg(not(any(adc_c0, adc_f1, adc_v1, adc_l0, adc_f3_v2, adc_f3_v1_1, adc_g0, adc_u5)))]
     #[allow(unused)]
     fn common_regs() -> crate::pac::adccommon::AdcCommon;
     #[cfg(any(adc_f1, adc_f3, adc_v1, adc_l0, adc_f3_v1_1))]
@@ -90,6 +91,7 @@ pub(crate) fn blocking_delay_us(us: u32) {
 
 /// ADC instance.
 #[cfg(not(any(
+    adc_c0,
     adc_f1,
     adc_v1,
     adc_l0,
@@ -109,6 +111,7 @@ pub trait Instance: SealedInstance + crate::Peripheral<P = Self> {
 }
 /// ADC instance.
 #[cfg(any(
+    adc_c0,
     adc_f1,
     adc_v1,
     adc_l0,
@@ -165,7 +168,7 @@ foreach_adc!(
                 crate::pac::$inst
             }
 
-            #[cfg(not(any(adc_f1, adc_v1, adc_l0, adc_f3_v2, adc_f3_v1_1, adc_g0, adc_u5)))]
+            #[cfg(not(any(adc_c0, adc_f1, adc_v1, adc_l0, adc_f3_v2, adc_f3_v1_1, adc_g0, adc_u5)))]
             fn common_regs() -> crate::pac::adccommon::AdcCommon {
                 return crate::pac::$common_inst
             }
@@ -216,7 +219,7 @@ pub const fn resolution_to_max_count(res: Resolution) -> u32 {
         Resolution::BITS12 => (1 << 12) - 1,
         Resolution::BITS10 => (1 << 10) - 1,
         Resolution::BITS8 => (1 << 8) - 1,
-        #[cfg(any(adc_v1, adc_v2, adc_v3, adc_l0, adc_g0, adc_f3, adc_f3_v1_1, adc_h5))]
+        #[cfg(any(adc_c0, adc_v1, adc_v2, adc_v3, adc_l0, adc_g0, adc_f3, adc_f3_v1_1, adc_h5))]
         Resolution::BITS6 => (1 << 6) - 1,
         #[allow(unreachable_patterns)]
         _ => core::unreachable!(),
