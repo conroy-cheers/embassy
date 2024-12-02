@@ -24,6 +24,10 @@ impl<'d, T: Instance> Adc<'d, T> {
         into_ref!(adc);
         rcc::enable_and_reset::<T>();
 
+        T::regs().cr().modify(|reg| {
+            reg.set_advregen(true);
+        });
+
         T::regs().cfgr1().modify(|reg| {
             reg.set_chselrmod(false);
         });
